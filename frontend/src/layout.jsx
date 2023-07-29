@@ -1,4 +1,5 @@
 `use client`;
+import { Box } from "@chakra-ui/react";
 import { Providers } from "./providers";
 import { ClerkProvider } from "@clerk/clerk-react";
 
@@ -10,9 +11,9 @@ export default function RootLayout({ children }) {
       <body>
         <ClerkProvider publishableKey={clerkPubKey}>
           <Providers>
-            <div style={{ height: "90vh" }}>
+            <Box height={"100vh"}>
               {children}
-            </div>
+            </Box>
           </Providers>
         </ClerkProvider>
       </body>

@@ -1,9 +1,10 @@
 // @ts-ignore
-'use client'
+"use client";
 import { Avatar, Flex, Heading, Box, Text } from "@chakra-ui/react";
 import type React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 
 export interface Props {
   author: string;
@@ -44,9 +45,11 @@ const ChannelMessage: React.FC<Props> = ({
         bg="transparent"
       >
         <Flex align="center">
-          <Heading color={isBot ? "#6e86d6" : "#f84a4b"} fontSize="16px">
-            {author}
-          </Heading>
+          {!isBot && (
+            <Heading color={isBot ? "#6e86d6" : "#f84a4b"} fontSize={"xl"}>
+              {author.toLocaleUpperCase()}
+            </Heading>
+          )}
           {isBot && (
             <Text
               marginLeft="6px"
@@ -56,22 +59,27 @@ const ChannelMessage: React.FC<Props> = ({
               padding="4px 5px"
               textTransform="uppercase"
               fontWeight="bold"
-              fontSize="11px"
             >
               Bot
             </Text>
           )}
           <Text
             as="em"
-            marginLeft="6px"
+            marginLeft={"3"}
             color={hasMention ? "#6e86d6" : "alpha.900"}
-            fontSize="13px"
           >
             {date}
           </Text>
         </Flex>
-        <Flex textAlign="left" fontSize="16px" color="white">
-          <Box color="alpha.300" cursor="pointer" marginRight="8px">
+        <Flex
+          textAlign="left"
+          color="white"
+          bgColor={isBot ? "#000" : "none"}
+          p="5"
+          rounded={"2xl"}
+          mt={isBot ? "5" : "0"}
+        >
+          <Box color="alpha.300" cursor="pointer" marginRight="8px" fontSize={"2xl"}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
             >{`${content}`}</ReactMarkdown>

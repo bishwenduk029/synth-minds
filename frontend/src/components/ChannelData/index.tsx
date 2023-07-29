@@ -1,6 +1,9 @@
 "use client";
 import {
+  Box,
   Button,
+  Center,
+  Container,
   Flex,
   Icon,
   IconButton,
@@ -25,6 +28,7 @@ import { useMicVADWrapper } from "../hooks/useMicVADWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createChatMutation } from "./api";
 import { MoonLoader } from "react-spinners";
+import { useUser } from "@clerk/clerk-react";
 
 export type FilePreview = File & { preview: string };
 
@@ -62,6 +66,7 @@ const handleUpload = async (files: any) => {
 };
 
 const ChannelData: React.FC = () => {
+  const { user } = useUser();
   const [messages, setMessages] = useStore.messages();
   const [newMessage, setNewMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
@@ -72,7 +77,7 @@ const ChannelData: React.FC = () => {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
 
-  const micVad = useMicVADWrapper(setLoading, getToken);
+  // const micVad = useMicVADWrapper(setLoading, getToken);
 
   // console.log(messages, isUploading, files, errorMessages);
 
@@ -131,7 +136,7 @@ const ChannelData: React.FC = () => {
           content: `Your file has been uploaded at ${url}. Please let me know if I need to memorize the content of the file`,
           hasMentioned: true,
           isBot: true,
-          src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+          src: "https://wqttbosbkuefkspmaqfa.supabase.co/storage/v1/object/public/ava/synth.png?t=2023-07-29T19%3A48%3A17.368Z",
         },
       ]);
       setIsUploading(false);
@@ -149,11 +154,11 @@ const ChannelData: React.FC = () => {
       ...old,
       {
         id: Date.now().toString(),
-        author: "Bot",
+        author: user.firstName,
         content: newMessage,
         hasMentioned: false,
-        isBot: true,
-        src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+        isBot: false,
+        src: user.imageUrl,
       },
     ]);
     const formData: ChatInput = {
@@ -184,11 +189,14 @@ const ChannelData: React.FC = () => {
       gridArea="CD"
       direction="column"
       justify="space-between"
+      mt={"auto"}
       bg="gray.700"
-      p={2}
-      height="100%"
+      w={"100%"}
+      p={8}
+      height="75%"
+      width={"100%"}
     >
-      <div className="messages">
+      <div className="messages" style={{ overflowY: "scroll", width: "100%" }}>
         {messages?.map((message: Message, index: number) => (
           <ChannelMessage
             key={index}
@@ -202,16 +210,29 @@ const ChannelData: React.FC = () => {
         ))}
       </div>
 
-      <InputGroup as="div" w="100%" padding="16px 16px">
-        <form
-          style={{ width: "100%", outline: "none" }}
-          onSubmit={handleSubmit}
+      <form
+        style={{
+          outline: "none",
+          width: "100%",
+          backgroundColor: "gray.700",
+        }}
+        onSubmit={handleSubmit}
+      >
+        <InputGroup
+          ml="4%"
+          as="div"
+          w="95%"
+          padding="16px 16px"
+          position={"absolute"}
+          top={"90%"}
+          left={"-1%"}
+          height="10%"
         >
-          <InputLeftElement left="24px" top="18px" {...getRootProps()}>
+          <InputLeftElement left="24px" top="24px" {...getRootProps()}>
             <input {...getInputProps()} />
             <IconButton
               aria-label="Upload a document"
-              size="sm"
+              size="md"
               bgColor="green.400"
               color="white"
               onClick={open}
@@ -220,33 +241,34 @@ const ChannelData: React.FC = () => {
           </InputLeftElement>
           <Input
             w="100%"
-            h="44px"
+            h="100%"
             type="text"
-            padding="0 10px 0 57px"
+            padding="0 12px 0 65px"
             rounded="7px"
             color="white"
             bg="gray.600"
             position="relative"
+            fontSize={"2xl"}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Start working with Ava"
+            placeholder="Start chatting with Synthia to build a new bot"
             _placeholder={{ color: "white.200" }}
             focusBorderColor="none"
             onKeyDown={handleInputKeyDown}
           />
-          <InputRightElement right="24px" top="18px">
+          <InputRightElement right="24px" top="24px">
             <IconButton
-              aria-label="Summarize the URL"
-              isLoading={isThinking}
-              size="sm"
+              aria-label="Chat with Synthia"
+              isLoading={isThinking || isUploading}
+              size="md"
               bgColor="green.400"
               color="white"
               type="submit"
               icon={<FaArrowAltCircleRight />}
             />
           </InputRightElement>
-        </form>
-      </InputGroup>
+        </InputGroup>
+      </form>
     </Flex>
   );
 };

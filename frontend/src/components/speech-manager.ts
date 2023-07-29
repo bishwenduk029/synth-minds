@@ -71,7 +71,7 @@ const debounce = (
 const sendData = debounce(function (blob: any, jwtToken: any) {
   // if 'sendData' uses 'this', make it a regular function
   console.log("sending data");
-  fetch("http://localhost:8000/api/inference", {
+  fetch("/api/inference", {
     method: "POST",
     body: createBody(blob),
     headers: {
