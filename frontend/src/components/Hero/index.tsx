@@ -14,121 +14,207 @@ import {
   createIcon,
   IconProps,
   useColorModeValue,
+  useDisclosure,
+  ModalOverlay,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  FormHelperText,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
+import { readApiKey, storeApiKey } from "../../util";
 
 export default function Hero() {
+  const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { getToken } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const initialRef = React.useRef(null);
+  const finalRef = React.useRef(null);
+
+  const handleGettingStarted = async () => {
+    try {
+      const api_key: string = initialRef.current.value;
+
+      if (!api_key || api_key.length === 0) {
+        throw new Error("API key is missing or empty.");
+      }
+      const apiKey = readApiKey();
+      if (!apiKey) {
+        setIsSubmitting(true);
+        storeApiKey(api_key);
+        setIsSubmitting(false);
+      }
+      navigate("/chats");
+    } catch (error) {
+      console.log(error);
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <Container maxW={"7xl"}>
-      <Stack
-        align={"center"}
-        spacing={{ base: 8, md: 10 }}
-        py={{ base: 10, md: 14 }}
-        direction={{ base: "column", md: "row" }}
-      >
-        <Stack flex={1} spacing={{ base: 5, md: 10 }}>
-          <Heading
-            lineHeight={1.1}
-            fontWeight={600}
-            fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
-          >
-            <Text
-              as={"span"}
-              position={"relative"}
-              _after={{
-                content: "''",
-                width: "full",
-                height: "30%",
-                position: "absolute",
-                bottom: 1,
-                left: 0,
-                bg: "red.400",
-                zIndex: -1,
-              }}
+    <>
+      <Container maxW={"7xl"}>
+        <Stack
+          align={"center"}
+          spacing={{ base: 8, md: 10 }}
+          py={{ base: 10, md: 14 }}
+          direction={{ base: "column", md: "row" }}
+        >
+          <Stack flex={1} spacing={{ base: 5, md: 10 }}>
+            <Heading
+              lineHeight={1.1}
+              fontWeight={600}
+              fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
             >
-              Synth Minds,
+              <Text
+                as={"span"}
+                position={"relative"}
+                _after={{
+                  content: "''",
+                  width: "full",
+                  height: "30%",
+                  position: "absolute",
+                  bottom: 1,
+                  left: 0,
+                  bg: "red.400",
+                  zIndex: -1,
+                }}
+              >
+                Synth Minds,
+              </Text>
+              <br />
+              <Text as={"span"} color={"brand.400"}>
+                build interactive bots!
+              </Text>
+            </Heading>
+            <Text color={"gray.500"} fontSize={"larger"}>
+              A platform to build interactive bots backed by content from your
+              personal notes, personal experiences, books, pdf, txt files or
+              videos, or content of your choice. The new bots you brew with
+              Synth-Minds, will make the knowledge you share with them, their
+              own persona. You can soon publish your bots to the world. Anyone
+              can learn new things from your bot by talking with it.
             </Text>
-            <br />
-            <Text as={"span"} color={"brand.400"}>
-              build interactive bots!
-            </Text>
-          </Heading>
-          <Text color={"gray.500"} fontSize={"larger"}>
-            A platform to build interactive bots backed by content from your
-            personal notes, personal experiences, books, pdf, txt files or
-            videos, or content of your choice. The new bots you brew with
-            Synth-Minds, will make the knowledge you share with them, their own
-            persona. You can soon publish your bots to the world. Anyone can
-            learn new things from your bot by talking with it.
-          </Text>
-          <Stack
-            spacing={{ base: 4, sm: 6 }}
-            direction={{ base: "column", sm: "row" }}
-          >
-            <Link to="/chats">
+            <Stack
+              spacing={{ base: 4, sm: 6 }}
+              direction={{ base: "column", sm: "row" }}
+            >
               <Button
                 rounded={"full"}
                 size={"lg"}
                 fontWeight={"normal"}
                 px={6}
+                onClick={onOpen}
                 colorScheme={"brand"}
                 bg={"brand.400"}
               >
                 Get started
               </Button>
-            </Link>
+            </Stack>
           </Stack>
-        </Stack>
-        <Flex
-          flex={1}
-          justify={"center"}
-          align={"center"}
-          position={"relative"}
-          w={"full"}
-        >
-          <Blob
-            w={"150%"}
-            h={"150%"}
-            position={"absolute"}
-            top={"-20%"}
-            left={0}
-            zIndex={-1}
-            color={useColorModeValue("red.50", "red.400")}
-          />
-          <Box
+          <Flex
+            flex={1}
+            justify={"center"}
+            align={"center"}
             position={"relative"}
-            height={"15%"}
-            rounded={"2xl"}
-            boxShadow={"2xl"}
-            width={"full"}
-            overflow={"hidden"}
+            w={"full"}
           >
-            <IconButton
-              aria-label={"Play Button"}
-              variant={"ghost"}
-              _hover={{ bg: "transparent" }}
-              icon={<PlayIcon w={12} h={12} />}
-              size={"lg"}
-              color={"white"}
+            <Blob
+              w={"150%"}
+              h={"150%"}
               position={"absolute"}
-              left={"90%"}
-              top={"90%"}
-              transform={"translateX(-50%) translateY(-50%)"}
+              top={"-20%"}
+              left={0}
+              zIndex={-1}
+              color={useColorModeValue("red.50", "red.400")}
             />
-            <Image
-              alt={"Hero Image"}
-              fit={"cover"}
-              align={"center"}
-              w={"100%"}
-              h={"100%"}
-              src={
-                "https://camo.githubusercontent.com/3188ef704c8c10d42f637785f6be92194ca7bde89e6dc324c0a987e044734825/68747470733a2f2f77717474626f73626b7565666b73706d617166612e73757061626173652e636f2f73746f726167652f76312f6f626a6563742f7075626c69632f6176612f73796e74685f736167652e6769663f743d323032332d30372d3239543138253341323825334133352e3933385a"
-              }
-            />
-          </Box>
-        </Flex>
-      </Stack>
-    </Container>
+            <Box
+              position={"relative"}
+              height={"15%"}
+              rounded={"2xl"}
+              boxShadow={"2xl"}
+              width={"full"}
+              overflow={"hidden"}
+            >
+              <IconButton
+                aria-label={"Play Button"}
+                variant={"ghost"}
+                _hover={{ bg: "transparent" }}
+                icon={<PlayIcon w={12} h={12} />}
+                size={"lg"}
+                color={"white"}
+                position={"absolute"}
+                left={"90%"}
+                top={"90%"}
+                transform={"translateX(-50%) translateY(-50%)"}
+              />
+              <Image
+                alt={"Hero Image"}
+                fit={"cover"}
+                align={"center"}
+                w={"100%"}
+                h={"100%"}
+                src={
+                  "https://camo.githubusercontent.com/3188ef704c8c10d42f637785f6be92194ca7bde89e6dc324c0a987e044734825/68747470733a2f2f77717474626f73626b7565666b73706d617166612e73757061626173652e636f2f73746f726167652f76312f6f626a6563742f7075626c69632f6176612f73796e74685f736167652e6769663f743d323032332d30372d3239543138253341323825334133352e3933385a"
+                }
+              />
+            </Box>
+          </Flex>
+        </Stack>
+      </Container>
+      <Modal
+        initialFocusRef={initialRef}
+        finalFocusRef={finalRef}
+        isOpen={isOpen}
+        onClose={onClose}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader color={"brand.300"}>
+            Connect your OpenAI account
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <FormControl>
+              <FormLabel>Enter your OpenAI API Key:</FormLabel>
+              <Input
+                ref={initialRef}
+                type="password"
+                placeholder="OpenAI API Key"
+              />
+              <FormHelperText>
+                We do not save your API KEY under any circumstance on our
+                servers. Make sure to put a limit on the usage of your API key
+                in OpenAI
+              </FormHelperText>
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              colorScheme="brand"
+              mr={3}
+              onClick={handleGettingStarted}
+              isLoading={isSubmitting}
+            >
+              Submit
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 

@@ -1,10 +1,13 @@
 "use client";
 import { utils } from "@ricky0123/vad-react";
+import { particleActions } from "./particle-manager.ts";
+import { readApiKey } from "../util/index.ts";
 
 declare global {
-  interface Window { webkitAudioContext: typeof AudioContext }
+  interface Window {
+    webkitAudioContext: typeof AudioContext;
+  }
 }
-
 
 let source: AudioBufferSourceNode;
 let sourceIsStarted = false;
@@ -12,6 +15,7 @@ const conversationThusFar = [];
 
 export const onSpeechStart = () => {
   console.log("speech started");
+  particleActions.onUserSpeaking();
   stopSourceIfNeeded();
 };
 
@@ -19,16 +23,17 @@ export const onSpeechStartEmpty = () => {
   console.log("speech started in wrong vad");
 };
 
-export const createOnSpeechEnd = (getToken: Function) => {
+export const createOnSpeechEnd = (getToken: Function, userID: string) => {
   const onSpeechEnd = async (audio: any) => {
     console.log("speech ended");
-    await processAudio(audio, getToken);
+    await processAudio(audio, getToken, userID);
   };
 
   return onSpeechEnd;
 };
 
 export const onMisfire = () => {
+  particleActions.reset();
   console.log("vad misfire");
 };
 
@@ -39,13 +44,14 @@ const stopSourceIfNeeded = () => {
   }
 };
 
-const processAudio = async (audio: any, getToken: Function) => {
+const processAudio = async (audio: any, getToken: Function, userID: string) => {
+  particleActions.onProcessing();
   const blob = createAudioBlob(audio);
   await validate(blob);
   const supabaseAccessToken = await getToken({
     template: "supabase-tarat-clerk",
   });
-  sendData(blob, supabaseAccessToken);
+  sendData(blob, supabaseAccessToken, userID);
 };
 
 const createAudioBlob = (audio: any) => {
@@ -68,18 +74,23 @@ const debounce = (
   };
 };
 
-const sendData = debounce(function (blob: any, jwtToken: any) {
+const sendData = debounce(function (blob: any, jwtToken: any, userID: string) {
   // if 'sendData' uses 'this', make it a regular function
   console.log("sending data");
-  fetch("/api/inference", {
+  const apiKey = readApiKey();
+  console.log(apiKey)
+  fetch(`https://used-tin-production.up.railway.app/api/inference/${userID}`, {
     method: "POST",
     body: createBody(blob),
     headers: {
       Authorization: `bearer ${jwtToken}`,
+      "api-key": apiKey,
     },
   })
     .then(handleResponse)
-    .then(handleSuccess)
+    .then((blob) => {
+      handleSuccess(blob);
+    })
     .catch(handleError);
 }, 10);
 
@@ -126,10 +137,14 @@ const handleSuccess = async (blob: any) => {
   source.connect(audioContext.destination);
   source.start(0);
   sourceIsStarted = true;
+  source.onended = particleActions.reset;
+
+  particleActions.onAiSpeaking();
 };
 
 const handleError = (error: any) => {
   console.log(`error encountered: ${error.message}`);
+  particleActions.reset();
 };
 
 const validate = async (data: any) => {

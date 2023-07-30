@@ -6,6 +6,8 @@ import SignInPage from "./sign-in/index.tsx";
 import SignOutPage from "./sign-up/page.tsx";
 import Header from "./components/Header.tsx";
 import LazyChannelDataWrapper from "./chats/index.tsx";
+import Footer from "./components/Footer.tsx";
+import LazyBotPageWrapper from "./bot-page/idex.tsx";
 
 const router = createBrowserRouter([
   {
@@ -14,6 +16,7 @@ const router = createBrowserRouter([
       <>
         <Header />
         <Hero />
+        <Footer />
       </>
     ),
   },
@@ -22,10 +25,17 @@ const router = createBrowserRouter([
     element: <LazyChannelDataWrapper />,
   },
   {
-    path: "/sign-in/*",
+    path: "/bots/:userId",
     element: (
-      <SignInPage />
+      <>
+        <LazyBotPageWrapper />
+        <Footer />
+      </>
     ),
+  },
+  {
+    path: "/sign-in/*",
+    element: <SignInPage />,
   },
   {
     path: "sign-out/*",

@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useMicVAD } from "@ricky0123/vad-react";
 import { onMisfire, createOnSpeechEnd, onSpeechStart } from "../speech-manager";
 
-export const useMicVADWrapper = (onLoadingChange, getToken) => {
-  const onSpeechEnd = createOnSpeechEnd(getToken);
+export const useMicVADWrapper = (onLoadingChange, getToken, userID) => {
+  const onSpeechEnd = createOnSpeechEnd(getToken, userID);
   const micVAD = useMicVAD({
     preSpeechPadFrames: 5,
     positiveSpeechThreshold: 0.9,

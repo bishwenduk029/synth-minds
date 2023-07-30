@@ -2,6 +2,7 @@
 
 import axios from "axios";
 import { ChatInput } from "./index";
+import { readApiKey } from "../../util";
 
 // Create the API instance
 // const api = axios.create({
@@ -18,10 +19,15 @@ export const createChatMutation = async (
   const supabaseAccessToken = await getToken({
     template: "supabase-tarat-clerk",
   });
-  const response = await api.post("/api/chats", chatInput, {
-    headers: {
-      Authorization: `Bearer ${supabaseAccessToken}`,
-    },
-  });
+
+  const response = await api.post(
+    "https://used-tin-production.up.railway.app/api/chats",
+    chatInput,
+    {
+      headers: {
+        Authorization: `Bearer ${supabaseAccessToken}`,
+      },
+    }
+  );
   return response.data;
 };

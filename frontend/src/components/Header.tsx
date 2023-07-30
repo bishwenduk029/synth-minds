@@ -4,15 +4,11 @@ import {
   Button,
   Flex,
   HStack,
-  Icon,
-  IconButton,
   Image,
   Text,
-  Tooltip,
 } from "@chakra-ui/react";
 import { UserButton, useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
-import { FaBrain } from "react-icons/fa";
 
 const Header = () => {
   const { isLoaded, isSignedIn, user } = useUser();

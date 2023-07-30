@@ -45,7 +45,7 @@ export default function Footer() {
         justify={{ base: "center", md: "space-between" }}
         align={{ base: "center", md: "center" }}
       >
-        <Text></Text>
+        <Text>Attributio: Luka Spahija</Text>
         <Stack alignItems="center" direction="row" spacing={4}>
           <Text fontSize="sm">
             <a href="/terms">Terms and Privacy</a>
@@ -64,7 +64,7 @@ export default function Footer() {
             fontSize="lg"
             fontWeight="bold"
           >
-            ChatBytes.
+            SynthMinds.
           </Text>
         </Stack>
       </Container>

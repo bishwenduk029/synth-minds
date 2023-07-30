@@ -79,7 +79,7 @@ const ChannelMessage: React.FC<Props> = ({
           rounded={"2xl"}
           mt={isBot ? "5" : "0"}
         >
-          <Box color="alpha.300" cursor="pointer" marginRight="8px" fontSize={"2xl"}>
+          <Box color="alpha.300" cursor="pointer" marginRight="8px" fontSize={"2xl"} p={4}>
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
             >{`${content}`}</ReactMarkdown>

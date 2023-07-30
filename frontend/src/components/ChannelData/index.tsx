@@ -24,17 +24,19 @@ import { useStore } from "../stores/index";
 import { useDropzone } from "react-dropzone";
 import { supabase } from "../core/supabase-client.js";
 import { useAuth } from "@clerk/clerk-react";
-import { useMicVADWrapper } from "../hooks/useMicVADWrapper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createChatMutation } from "./api";
 import { MoonLoader } from "react-spinners";
 import { useUser } from "@clerk/clerk-react";
+import MyVisualizer from "../AudioVisualizaer/index.js";
+import { readApiKey } from "../../util/index.js";
 
 export type FilePreview = File & { preview: string };
 
 export interface ChatInput {
   // Define the properties of your ChatInput interface based on your requirements
   user_message: string;
+  api_key: string;
 }
 
 const uploadToSupabase = async (file: File) => {
@@ -65,7 +67,7 @@ const handleUpload = async (files: any) => {
   return url;
 };
 
-const ChannelData: React.FC = () => {
+const ChannelData: React.FC = ({ hasVoice }: { hasVoice: boolean }) => {
   const { user } = useUser();
   const [messages, setMessages] = useStore.messages();
   const [newMessage, setNewMessage] = useState("");
@@ -76,8 +78,6 @@ const ChannelData: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
-
-  // const micVad = useMicVADWrapper(setLoading, getToken);
 
   // console.log(messages, isUploading, files, errorMessages);
 
@@ -161,9 +161,11 @@ const ChannelData: React.FC = () => {
         src: user.imageUrl,
       },
     ]);
+    const apiKey = readApiKey();
     const formData: ChatInput = {
       // Extract the form data here (e.g., message: e.target.message.value)
       user_message: newMessage,
+      api_key: apiKey,
     };
     // Call the mutation function with the form data
     try {

@@ -5,13 +5,13 @@ from llama_index import GPTVectorStoreIndex, Document
 from llama_index.indices.base import BaseGPTIndex
 from llama_index import ServiceContext
 from pydantic import BaseModel, Field
-from agents.memory import get_ava_second_brain
+from agents.memory import get_bot_second_brain
 
 def record_note(note: str, user_id: str) -> str:
     """Useful for when you need to record a note or reminder for yourself to reference in the future."""
     # actual_note, user_id = note.split(",")
     try:
-        secondary_index = get_ava_second_brain(user_id)
+        secondary_index = get_bot_second_brain(user_id)
         secondary_index.insert(Document(note))
         return "Note successfully recorded."
     except Exception as e:
@@ -26,7 +26,7 @@ def search_notes(query_str: str, user_id: str) -> str:
     """Useful for searching through notes that you previously recorded."""
     # query, user_id = query_str.split(",")
     try:
-        secondary_index = get_ava_second_brain(user_id)
+        secondary_index = get_bot_second_brain(user_id)
         query_engine = secondary_index.as_query_engine()
         response = query_engine.query(query_str)
         return str(response)

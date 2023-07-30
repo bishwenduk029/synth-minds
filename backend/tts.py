@@ -10,9 +10,7 @@ from util import delete_file
 
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from langchain.llms import OpenAI
-
-llm = OpenAI(temperature=0, model_name="gpt-3.5-turbo")
+from llm import factory
 
 LANGUAGE = os.getenv("LANGUAGE", "en")
 AUDIO_SPEED = os.getenv("AUDIO_SPEED", None)
@@ -21,6 +19,26 @@ TTS_PROVIDER = os.getenv("TTS_PROVIDER", "EDGETTS")
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", None)
 ELEVENLABS_VOICE = os.getenv("ELEVENLABS_VOICE", "rJ83wT4e057MKGFFhb9e")
 EDGETTS_VOICE = os.getenv("EDGETTS_VOICE", "en-US-EricNeural")
+
+# Using self OpenAI key
+llm = factory.create_openai_gpt3_model()
+prompt = PromptTemplate(
+    input_variables=["body"],
+    template="""
+    Transform the following virtual assistant responses into more expressive versions, emphasizing the embedded emotion through extended words, laughter, or other phonetic variations where appropriate, while being careful not to include inappropriate phonetics, such as laughter in serious contexts:
+    During transformation, leave out strings like website URL, or lists.
+
+    Input: "I am absolutely thrilled because our team won the match."
+    Output: "Our team won! I'm absoluuuutely ecstatic!"
+
+    Input: "I am pretty upset as our vacation got cancelled."
+    Output: "Vacation cancelled... I'm really buuuuuummed out."
+
+    Input: "{body}"
+    """,
+)
+
+chain = LLMChain(llm=llm, prompt=prompt)
 
 
 async def to_speech(text, background_tasks):
@@ -33,23 +51,7 @@ async def to_speech(text, background_tasks):
 
 def _elevenlabs_to_speech(text, background_tasks):
     start_time = time.time()
-
-    prompt = PromptTemplate(
-        input_variables=["body"],
-        template="""
-    Transform the following virtual assistant responses into more expressive versions, emphasizing the embedded emotion through extended words, laughter, or other phonetic variations where appropriate, while being careful not to include inappropriate phonetics, such as laughter in serious contexts:
-
-    Input: "I am absolutely thrilled because our team won the match."
-    Output: "Our team won! I'm absoluuuutely ecstatic!"
-
-    Input: "I am pretty upset as our vacation got cancelled."
-    Output: "Vacation cancelled... I'm really buuuuuummed out."
-
-    Input: "{body}"
-    """,
-    )
-
-    chain = LLMChain(llm=llm, prompt=prompt)
+    
     new_text = chain.run(body=text)
 
     audio = generate(

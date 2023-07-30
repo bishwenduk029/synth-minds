@@ -3,7 +3,7 @@ import json
 import time
 import logging
 
-from fastapi import FastAPI, UploadFile, BackgroundTasks, Header, Depends, HTTPException, Header, Request
+from fastapi import FastAPI, UploadFile, BackgroundTasks, Header, Depends, HTTPException, Header, Request, Path
 from fastapi.responses import HTMLResponse
 from jose import JWTError, jwt
 from typing import Optional
@@ -12,12 +12,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
+from llm import LanguageModelManager
 
+from llm import llm_manager
 from ai import get_completion
 from stt import transcribe
 from tts import to_speech
 
 import os
+
 
 supabase_secret = os.environ['SUPABASE_JWT_ACCESS_KEY']
 SECRET_KEY = supabase_secret
@@ -63,14 +67,16 @@ def get_current_user(authorization: Optional[str] = Header(None)):
         raise credentials_exception
 
 
-@app.post("/api/inference")
+@app.post("/api/inference/{user_id}")
 async def infer(audio: UploadFile, background_tasks: BackgroundTasks,
-                user_id: str = Depends(get_current_user)) -> FileResponse:
-    logging.debug("received request")
+                user_id: str = Path(...,
+                                    description="User ID obtained from the path"),
+                api_key: str = Header(..., alias='api-key', description="API Key")) -> FileResponse:
     start_time = time.time()
 
     user_prompt_text = await transcribe(audio)
-    ai_response_text = await get_completion(user_prompt_text, user_id)
+    new_bot_id = f'{user_id}elf'
+    ai_response_text = await get_completion(user_prompt_text, new_bot_id, api_key, True)
     ai_response_audio_filepath = await to_speech(ai_response_text, background_tasks)
 
     logging.info('total processing time: %s %s',
@@ -81,6 +87,7 @@ async def infer(audio: UploadFile, background_tasks: BackgroundTasks,
 
 class ChatInput(BaseModel):
     user_message: str
+    api_key: str
 
 
 @app.post("/api/chats")
@@ -88,7 +95,7 @@ async def api_process_objective(chat_input: ChatInput, user_id: str = Depends(ge
     """
     Process objective and provide guidance
     """
-    ai_response_text = await get_completion(chat_input.user_message, user_id)
+    ai_response_text = await get_completion(chat_input.user_message, user_id, chat_input.api_key,  False)
     return ai_response_text
 
 
@@ -103,6 +110,11 @@ async def healthcheck():
 
 @app.get("/chats")
 async def chats():
+    return RedirectResponse(url="/")
+
+
+@app.get("/bots/{user_id}")
+async def bots():
     return RedirectResponse(url="/")
 
 
