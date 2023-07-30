@@ -7,11 +7,12 @@ import { useAuth } from "@clerk/clerk-react";
 import { useParams } from "react-router-dom";
 
 const BotPage = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { userId } = useParams();
   const { getToken } = useAuth();
 
-  useMicVADWrapper(setLoading, getToken, userId);
+  const micVad = useMicVADWrapper(setLoading, getToken, userId);
+  console.log(micVad)
 
   if (loading) {
     return (

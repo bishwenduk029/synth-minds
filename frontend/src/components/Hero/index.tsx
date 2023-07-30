@@ -29,13 +29,11 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@clerk/clerk-react";
 import { readApiKey, storeApiKey } from "../../util";
 
 export default function Hero() {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { getToken } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initialRef = React.useRef(null);
@@ -48,12 +46,9 @@ export default function Hero() {
       if (!api_key || api_key.length === 0) {
         throw new Error("API key is missing or empty.");
       }
-      const apiKey = readApiKey();
-      if (!apiKey) {
-        setIsSubmitting(true);
-        storeApiKey(api_key);
-        setIsSubmitting(false);
-      }
+      setIsSubmitting(true);
+      storeApiKey(api_key);
+      setIsSubmitting(false);
       navigate("/chats");
     } catch (error) {
       console.log(error);
@@ -114,7 +109,13 @@ export default function Hero() {
                 size={"lg"}
                 fontWeight={"normal"}
                 px={6}
-                onClick={onOpen}
+                onClick={() => {
+                  const apiKey = readApiKey();
+                  if (!apiKey) {
+                    onOpen();
+                  }
+                  navigate("/chats");
+                }}
                 colorScheme={"brand"}
                 bg={"brand.400"}
               >
@@ -165,7 +166,7 @@ export default function Hero() {
                 w={"100%"}
                 h={"100%"}
                 src={
-                  "https://camo.githubusercontent.com/3188ef704c8c10d42f637785f6be92194ca7bde89e6dc324c0a987e044734825/68747470733a2f2f77717474626f73626b7565666b73706d617166612e73757061626173652e636f2f73746f726167652f76312f6f626a6563742f7075626c69632f6176612f73796e74685f736167652e6769663f743d323032332d30372d3239543138253341323825334133352e3933385a"
+                  "https://wqttbosbkuefkspmaqfa.supabase.co/storage/v1/object/public/ava/synth_sage.gif?t=2023-07-29T18%3A28%3A35.938Z"
                 }
               />
             </Box>

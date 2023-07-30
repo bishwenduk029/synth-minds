@@ -7,7 +7,7 @@ import SignOutPage from "./sign-up/page.tsx";
 import Header from "./components/Header.tsx";
 import LazyChannelDataWrapper from "./chats/index.tsx";
 import Footer from "./components/Footer.tsx";
-import LazyBotPageWrapper from "./bot-page/idex.tsx";
+import BotPageWrapper from "./bot-page/index.tsx";
 
 const router = createBrowserRouter([
   {
@@ -25,10 +25,10 @@ const router = createBrowserRouter([
     element: <LazyChannelDataWrapper />,
   },
   {
-    path: "/bots/:userId",
+    path: "/:userId",
     element: (
       <>
-        <LazyBotPageWrapper />
+        <BotPageWrapper />
         <Footer />
       </>
     ),

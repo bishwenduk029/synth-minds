@@ -33,5 +33,5 @@ def ingest(input: str) -> str:
     vec_store = get_bot_second_brain_vecstore(user_id)
     storage_context = StorageContext.from_defaults(vector_store=vec_store)
     VectorStoreIndex.from_documents(documents, storage_context=storage_context)
-    result = f"Ingested the document successfully. Your bot ready and you can access it here {SYNTH_MINDS_BACKEND_URL}/bots/{user_id}"
+    result = f"Ingested the document successfully. Your bot ready and you can access it here {SYNTH_MINDS_BACKEND_URL}/{user_id}"
     return result

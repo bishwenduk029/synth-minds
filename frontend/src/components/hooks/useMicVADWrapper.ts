@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useMicVAD } from "@ricky0123/vad-react";
 import { onMisfire, createOnSpeechEnd, onSpeechStart } from "../speech-manager";
 
