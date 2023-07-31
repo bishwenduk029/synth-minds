@@ -61,7 +61,7 @@ tool_names = [tool.name for tool in tools]
 
 @lru_cache(100)
 def get_ava_for_user(user_id, api_key):
-    llm = factory.create_openai_gpt4_model(api_key=api_key)
+    llm = factory.create_openai_gpt3_model(api_key=api_key)
     memory = get_bot_primary_brain(user_id)
     llm_chain = LLMChain(llm=llm, prompt=prompt)
     agent = ConversationalAgent(llm_chain=llm_chain, allowed_tools=tool_names)

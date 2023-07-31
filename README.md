@@ -91,4 +91,10 @@ docker run -d -e OPENAI_API_KEY=<YOUR_API_KEY> -p 8000:80 synth-minds
 ```
 5. Navigate to `localhost:8000` in a modern browser
 
-## Demo
+## Backlog
+  - Currently the platform supports creating only 1 bot. Allow for creating more than one bot.
+  - Show all the newly created bots in one page with publish option.
+  - Add the marketplace portal for publishing and consuming bots.
+  - Enhance the voice interaction user experience to make it smooth.
+  - Improve system prompts of the AI Agents.
+  - Integrate with open source LLMs, for private bot experience.
