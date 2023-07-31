@@ -109,10 +109,11 @@ export default function Hero() {
                 size={"lg"}
                 fontWeight={"normal"}
                 px={6}
-                onClick={() => {
+                onClick={(e) => {
                   const apiKey = readApiKey();
-                  if (!apiKey) {
+                  if (!apiKey || apiKey.length === 0) {
                     onOpen();
+                    return;
                   }
                   navigate("/chats");
                 }}
