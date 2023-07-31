@@ -27,3 +27,7 @@ psycopg
 psycopg2-binary
 llama_hub
 ffmpeg-python~=0.2.0
+vecs==0.2.6
+docarray==0.21.0
+docutils==0.20.1
+docx2txt==0.8

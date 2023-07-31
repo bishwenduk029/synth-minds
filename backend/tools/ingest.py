@@ -8,20 +8,6 @@ from llama_hub.remote.base import RemoteReader
 
 import os
 
-# Function to read environment variables and make them global
-
-
-def read_and_set_env_variable():
-    global SYNTH_MINDS_BACKEND_URL  # Declare the variable as global
-
-    # Replace 'YOUR_ENV_VARIABLE_NAME' with the actual name of your environment variable
-    env_variable_value = os.environ.get('SYNTH_MINDS_BACKEND_URL')
-
-    if env_variable_value is not None:
-        SYNTH_MINDS_BACKEND_URL = env_variable_value
-    else:
-        print("Environment variable not set.")
-
 
 loader = RemoteReader()
 
@@ -33,5 +19,12 @@ def ingest(input: str) -> str:
     vec_store = get_bot_second_brain_vecstore(user_id)
     storage_context = StorageContext.from_defaults(vector_store=vec_store)
     VectorStoreIndex.from_documents(documents, storage_context=storage_context)
-    result = f"Ingested the document successfully. Your bot ready and you can access it here {SYNTH_MINDS_BACKEND_URL}/{user_id}"
+    env_variable_value = os.environ.get('SYNTH_MINDS_BACKEND_URL')
+
+    if env_variable_value is not None:
+        SYNTH_MINDS_BACKEND_URL = env_variable_value
+    else:
+        print("Environment variable not set.")
+    
+    result = f"Ingested the document successfully. Your bot ready and you can access it here {SYNTH_MINDS_BACKEND_URL.strip()}/{user_id.strip()}"
     return result

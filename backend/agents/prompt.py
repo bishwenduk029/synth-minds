@@ -30,7 +30,7 @@ Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
 ```
 
-When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the format:
+When you have a response to say to the Human, or if you do not need to use a tool, you MUST use the following format(the prefix of "Thought: " and "{ai_prefix}: " are must be included):
 
 ```
 Thought: Do I need to use a tool? No

@@ -21,7 +21,7 @@ google_search_tool = Tool(
 )
 
 tools = [search_webpage, google_search_tool,
-         *basic_tools, Tool(
+         Tool(
              name="Remember or Memorize information or content",
              func=parsing_record_note,
              description="Useful for when you need to record or memorize some information, data or note into your second brain for reference in the future. The input to this tool should be comma separated list of strings of length 2. For example `Some Note, cc9fkjdkfd`"
@@ -29,7 +29,7 @@ tools = [search_webpage, google_search_tool,
          Tool(
              name="Remember or Memorize content from remote location",
              func=ingest,
-             description="Useful for when you need to learn or digest or ingest or memorize new information from remote locations. The input to this tool should be comma separated list of strings of length 2. For example `Some Information, cc9fkjdkfd`"
+             description="Useful for when you need to learn or digest or ingest or memorize new information from remote locations. The input to this tool should be comma separated list of strings of length 2. For example `remote url or website url, cc9fkjdkfd`"
          ),
          Tool(
              name="Query or Search content from your Second Brain",
@@ -58,7 +58,6 @@ prompt = ConversationalAgent.create_prompt(
 
 tool_names = [tool.name for tool in tools]
 
-
 @lru_cache(100)
 def get_ava_for_user(user_id, api_key):
     llm = factory.create_openai_gpt3_model(api_key=api_key)
@@ -66,5 +65,5 @@ def get_ava_for_user(user_id, api_key):
     llm_chain = LLMChain(llm=llm, prompt=prompt)
     agent = ConversationalAgent(llm_chain=llm_chain, allowed_tools=tool_names)
     agent_executor = AgentExecutor.from_agent_and_tools(
-        agent=agent, tools=tools, verbose=False, memory=memory)
+        agent=agent, tools=tools, verbose=False, memory=memory, handle_parsing_errors="Check your output and make sure it conforms!")
     return agent_executor

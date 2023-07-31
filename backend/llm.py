@@ -1,5 +1,6 @@
 from langchain.llms import OpenAI, GPT4All, OpenAIChat
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain.chat_models import ChatOpenAI
 
 
 import os
@@ -43,8 +44,7 @@ class ModelFactory:
         return llm
 
     def create_openai_gpt3_model(self, api_key: str = None, verbose: bool = False) -> OpenAI:
-        llm = OpenAIChat(
-            temperature=0, model_name="gpt-3.5-turbo", verbose=verbose)
+        llm = OpenAI(temperature=0, verbose=verbose)
         return llm
 
 
