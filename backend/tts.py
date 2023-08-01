@@ -53,10 +53,11 @@ def _elevenlabs_to_speech(text, background_tasks):
     start_time = time.time()
     
     new_text = chain.run(body=text)
+    result_string = new_text.replace('Output: ', '')
 
     audio = generate(
         api_key=ELEVENLABS_API_KEY,
-        text=new_text,
+        text=result_string.strip(),
         voice=ELEVENLABS_VOICE,
         model="eleven_monolingual_v1"
     )

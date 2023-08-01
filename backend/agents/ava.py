@@ -8,6 +8,7 @@ from tools.upload_file import upload_file
 from tools.web_search import search_webpage
 from tools.google_search import search
 from tools.note_taking import parsing_record_note
+from tools.ingest_web import ingest_web
 from langchain.agents import load_tools
 from llm import factory
 from functools import lru_cache
@@ -30,6 +31,11 @@ tools = [search_webpage, google_search_tool,
              name="Remember or Memorize content from remote location",
              func=ingest,
              description="Useful for when you need to learn or digest or ingest or memorize new information from remote locations. The input to this tool should be comma separated list of strings of length 2. For example `remote url or website url, cc9fkjdkfd`"
+         ),
+         Tool(
+             name="Remember or Memorize content from some website",
+             func=ingest_web,
+             description="Useful for when you need to learn or digest or ingest or memorize new information from websites shares by user. The input to this tool should be comma separated list of strings of length 2. For example `remote url or website url, cc9fkjdkfd`"
          ),
          Tool(
              name="Query or Search content from your Second Brain",
